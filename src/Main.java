@@ -24,13 +24,13 @@ public class Main {
         int personY;
 
         int personLive = 3;
-
         int sizeBoard = 5;
-        personX = 1 + sizeBoard / 2;
-        personY = 1 + sizeBoard / 2;
+
         String person = "Гг";
         String monster = "Мм";
+        String big_monster = "Бм";
         String castle = "З ";
+        String nothing = "  ";
 
         String leftBlock = "| ";
         String rightBlock = "|";
@@ -38,19 +38,31 @@ public class Main {
         String[][] board = new String[sizeBoard][sizeBoard];
         for (int y = 0; y < sizeBoard; y++) {
             for (int x = 0; x < sizeBoard; x++) {
-                board[y][x] = "  ";
+                board[y][x] = nothing;
             }
         }
 
-        int countMonster = sizeBoard * sizeBoard - sizeBoard - 1;
         Random r = new Random();
+        personX = 1 + r.nextInt(sizeBoard);
+        personY = sizeBoard;
+
+        int countMonster = 5;
+
+        int monsterY = r.nextInt(sizeBoard);
+        int monsterX = r.nextInt(sizeBoard);
         for (int i = 0; i <= countMonster; i++) {
-            board[r.nextInt(sizeBoard - 1)][r.nextInt(sizeBoard)] = monster;
+            while (!(board[monsterY][monsterX].equals(nothing))) {
+                System.out.println(board[monsterY][monsterX] + monsterY + monsterX + i);
+                monsterY = r.nextInt(sizeBoard);
+                monsterX = r.nextInt(sizeBoard);
+            }
+            board[monsterY][monsterX] = monster;
         }
 
         int castleX = r.nextInt(sizeBoard);
         int castleY = 0;
         board[castleY][castleX] = castle;
+
         System.out.println("Ты готов начать играть в игру? (Напиши: ДА или НЕТ)");
         Scanner sc = new Scanner(System.in);
         String answer = sc.nextLine();
@@ -60,7 +72,6 @@ public class Main {
                 int difficultGame = sc.nextInt();
                 System.out.println("Выбранная сложность:\t" + difficultGame);
 
-                int maxStep = 2;
                 while (true) {
                     board[personY - 1][personX - 1] = person;
                     for (String[] raw : board) {
@@ -78,22 +89,26 @@ public class Main {
                     int x = sc.nextInt();
                     int y = sc.nextInt();
                     System.out.println(x + ", " + y);
-                    if ((x == personX && y == personY) || !(0 <= x && x <= sizeBoard && 0 <= y && y <= sizeBoard)) {
+                    if ((x == personX && y == personY) || !(0 < x && x <= sizeBoard && 0 < y && y <= sizeBoard)) {
                         System.out.println("Неккоректный ход");
-                    } else if (Boolean.logicalXor(Math.abs(x - personX) == 1, Math.abs(y - personY) == 1)) {
+                    } else if ((Math.abs(x - personX) == 1 && Math.abs(y - personY) == 0) || (Math.abs(x - personX) == 0 && Math.abs(y - personY) == 1)) {
                         if (board[y - 1][x - 1].equals("  ")) {
                             board[personY - 1][personX - 1] = "  ";
                             personX = x;
                             personY = y;
                             step++;
-                            System.out.println("Ход корректный; Новые координаты: " + personX + ", " + personY +
-                                    "\nХод номер: " + step);
                         } else if (board[y - 1][x - 1].equals(castle)) {
                             System.out.println("Вы прошли игру!");
                             break;
                         } else {
                             if (taskMonster()) {
                                 personLive -= 1;
+                            } else {
+                                board[personY - 1][personX - 1] = "  ";
+                                personX = x;
+                                personY = y;
+                                step++;
+                                System.out.println("Ура, Вы победили монстра!");
                             }
                             if (personLive <= 0) {
                                 System.out.println("Потрачено. Игра закончиалсь.");
