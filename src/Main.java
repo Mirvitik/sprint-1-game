@@ -2,33 +2,12 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
-    static boolean taskMonster() {
-        Random r = new Random();
-        int x = r.nextInt(100);
-        int y = r.nextInt(100);
-        int trueAnswer = x - y;
-        System.out.println("Реши пример: " + x + " - " + y + " = ?");
-        Scanner sc = new Scanner(System.in);
-        int ans = sc.nextInt();
-        if (trueAnswer == ans) {
-            System.out.println("Верно! Ты победил монстра");
-            return false;
-        }
-        System.out.println("Ты проиграл эту битву!");
-        return true;
-    }
-
     public static void main(String[] args) {
         int step = 0;
-        int personX;
-        int personY;
 
-        int personLive = 3;
         int sizeBoard = 5;
 
-        String person = "Гг";
-        String monster = "Мм";
-        String big_monster = "Бм";
+        Person person = new Person(sizeBoard);
         String castle = "З ";
         String nothing = "  ";
 
@@ -43,20 +22,20 @@ public class Main {
         }
 
         Random r = new Random();
-        personX = 1 + r.nextInt(sizeBoard);
-        personY = sizeBoard;
 
-        int countMonster = 5;
+        int countMonster = sizeBoard * sizeBoard - sizeBoard - 5;
 
-        int monsterY = r.nextInt(sizeBoard);
-        int monsterX = r.nextInt(sizeBoard);
-        for (int i = 0; i <= countMonster; i++) {
-            while (!(board[monsterY][monsterX].equals(nothing))) {
-                System.out.println(board[monsterY][monsterX] + monsterY + monsterX + i);
-                monsterY = r.nextInt(sizeBoard);
-                monsterX = r.nextInt(sizeBoard);
+        Monster[] arrMonster = new Monster[countMonster];
+        int count = 0;
+        Monster el;
+        while (count < countMonster) {
+            el = new Monster(sizeBoard);
+            if (board[el.getY()][el.getX()].equals("  ")) {
+                board[el.getY()][el.getX()] = el.getImage();
+                arrMonster[count] = el;
+                count++;
             }
-            board[monsterY][monsterX] = monster;
+
         }
 
         int castleX = r.nextInt(sizeBoard);
@@ -73,7 +52,7 @@ public class Main {
                 System.out.println("Выбранная сложность:\t" + difficultGame);
 
                 while (true) {
-                    board[personY - 1][personX - 1] = person;
+                    board[person.getY()][person.getX()] = person.getImage();
                     for (String[] raw : board) {
                         System.out.println(wall);
                         for (String col : raw) {
@@ -84,49 +63,52 @@ public class Main {
                     System.out.println(wall);
 
                     System.out.println("Введите куда будет ходить персонаж(ход возможен только по вертикали и горизонтали на одну клетку;");
-                    System.out.println("Координаты персонажа - (x: " + personX + ", y: " + personY + "))");
+                    System.out.println("Координаты персонажа - (x: " + (person.getX() + 1) + ", y: " + (person.getY() + 1) + "))");
 
-                    int x = sc.nextInt();
-                    int y = sc.nextInt();
+                    int x = sc.nextInt() - 1;
+                    int y = sc.nextInt() - 1;
                     System.out.println(x + ", " + y);
-                    if ((x == personX && y == personY) || !(0 < x && x <= sizeBoard && 0 < y && y <= sizeBoard)) {
+                    if ((x == person.getX() && y == person.getY()) || !(0 <= x && x < sizeBoard && 0 <= y && y < sizeBoard)) {
                         System.out.println("Неккоректный ход");
-                    } else if ((Math.abs(x - personX) == 1 && Math.abs(y - personY) == 0) || (Math.abs(x - personX) == 0 && Math.abs(y - personY) == 1)) {
-                        if (board[y - 1][x - 1].equals("  ")) {
-                            board[personY - 1][personX - 1] = "  ";
-                            personX = x;
-                            personY = y;
+                    } else if (person.moveCorrect(x, y)) {
+                        if (board[y][x].equals("  ")) {
+                            board[person.getY()][person.getX()] = "  ";
+                            person.move(x, y);
                             step++;
-                        } else if (board[y - 1][x - 1].equals(castle)) {
+                        } else if (board[y][x].equals(castle)) {
                             System.out.println("Вы прошли игру!");
                             break;
                         } else {
-                            if (taskMonster()) {
-                                personLive -= 1;
-                            } else {
-                                board[personY - 1][personX - 1] = "  ";
-                                personX = x;
-                                personY = y;
-                                step++;
-                                System.out.println("Ура, Вы победили монстра!");
+                            for (Monster monst : arrMonster) {
+                                if (monst.conflictPerson(x, y)) {
+                                    if (!(monst.taskMonster(difficultGame))) {
+                                        board[person.getY()][person.getX()] = "  ";
+                                        person.move(x, y);
+                                        step++;
+                                        System.out.println("Ура, Вы победили монстра!");
+                                    } else {
+                                        person.downLive();
+                                    }
+                                    break;
+                                }
                             }
-                            if (personLive <= 0) {
+                            if (person.getLive() <= 0) {
                                 System.out.println("Потрачено. Игра закончиалсь.");
-                            } else if (personLive == 1) {
-                                System.out.println("Вы наткнулись на монстра. Ваши координаты: " + personX + ", " + personY +
-                                        "\nУ вас осталось: " + personLive + " жизнь");
+                            } else if (person.getLive() == 1) {
+                                System.out.println("Вы наткнулись на монстра. Ваши координаты: " + (person.getX() + 1) + ", " + (person.getY() + 1) +
+                                        "\nУ вас осталось: " + person.getLive() + " жизнь");
                             } else {
-                                System.out.println("Вы наткнулись на монстра. Ваши координаты: " + personX + ", " + personY +
-                                        "\nУ вас осталось: " + personLive + " жизней");
+                                System.out.println("Вы наткнулись на монстра. Ваши координаты: " + (person.getX() + 1) + ", " + (person.getY() + 1) +
+                                        "\nУ вас осталось: " + person.getLive() + " жизней");
                             }
                         }
                         System.out.println("Ход корректный; Новые координаты: " +
-                                personX + ", " + personY + "\nХод номер: " + step);
+                                (person.getX() + 1) + ", " + (person.getY() + 1) + "\nХод номер: " + step);
                     } else {
                         System.out.println("Координаты не изменены");
                     }
-                    if (personLive <= 0) {
-                        System.out.println("Закончились жизни. Итоги:\n" + "Сделано " + step + " шагов\n" + "Последняя координата " + personX + "," + personY);
+                    if (person.getLive() <= 0) {
+                        System.out.println("Закончились жизни. Итоги:\n" + "Сделано " + step + " шагов\n" + "Последняя координата " + (person.getX() + 1) + "," + (person.getY() + 1));
                         break;
                     }
                 }
