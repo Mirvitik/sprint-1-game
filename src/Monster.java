@@ -2,12 +2,12 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Monster {
-    private String image = "\uD83E\uDDDF\u200D";
+    protected String image = "\uD83E\uDDDF\u200D";
     private final int x, y;
     Random r = new Random();
 
     Monster(int sizeBoard) {
-        this.y = r.nextInt(sizeBoard - 1);
+        this.y = r.nextInt(sizeBoard);
         this.x = r.nextInt(sizeBoard);
     }
 

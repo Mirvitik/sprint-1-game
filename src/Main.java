@@ -8,7 +8,7 @@ public class Main {
         int sizeBoard = 5;
 
         Person person = new Person(sizeBoard);
-        String castle = "З ";
+        String castle = "\uD83C\uDFF0";
         String nothing = "  ";
 
         String leftBlock = "| ";
@@ -23,14 +23,24 @@ public class Main {
 
         Random r = new Random();
 
+        board[person.getY()][person.getX()] = person.getImage();
+
+        int castleX = r.nextInt(sizeBoard);
+        int castleY = 0;
+        board[castleY][castleX] = castle;
+
         int countMonster = sizeBoard * sizeBoard - sizeBoard - 5;
 
         Monster[] arrMonster = new Monster[countMonster];
         int count = 0;
         Monster el;
         while (count < countMonster) {
-            el = new Monster(sizeBoard);
-            if (board[el.getY()][el.getX()].equals("  ")) {
+            if (count % 3 == 0) {
+                el = new BigMonster(sizeBoard);
+            } else {
+                el = new Monster(sizeBoard);
+            }
+            if (board[el.getY()][el.getX()].equals(nothing)) {
                 board[el.getY()][el.getX()] = el.getImage();
                 arrMonster[count] = el;
                 count++;
@@ -38,9 +48,6 @@ public class Main {
 
         }
 
-        int castleX = r.nextInt(sizeBoard);
-        int castleY = 0;
-        board[castleY][castleX] = castle;
 
         System.out.println("Ты готов начать играть в игру? (Напиши: ДА или НЕТ)");
         Scanner sc = new Scanner(System.in);
@@ -49,6 +56,10 @@ public class Main {
             case "ДА":
                 System.out.println("Выбери сложность игры(от 1 до 5):");
                 int difficultGame = sc.nextInt();
+                while ((difficultGame > 5) || (difficultGame < 1)) {
+                    System.out.println("Вбейте число от 1 до 5 включительно:");
+                    difficultGame = sc.nextInt();
+                }
                 System.out.println("Выбранная сложность:\t" + difficultGame);
 
                 while (true) {
