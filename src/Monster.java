@@ -24,7 +24,7 @@ public class Monster {
     }
 
     public boolean conflictPerson(int perX, int perY) {
-        return (perY - 1 == this.y && perX == this.x) || (perY + 1 == this.y && perX == this.x) || (perY == this.y && perX - 1 == this.x) || (perY == this.y && perX + 1 == this.x);
+        return (perY == this.y && perX == this.x);
     }
 
 
