@@ -14,16 +14,21 @@ public class BigMonster extends Monster {
 
     @Override
     public boolean taskMonster(int difficultGame) {
-        System.out.println("Решите задачу:");
+        System.out.println("Напишите данную строку наоборот:");
         difficultGame++;
-        int x = r.nextInt(10 * difficultGame);
-        int y = r.nextInt(10 * difficultGame);
-        int z = r.nextInt(100 * difficultGame);
-        int trueAnswer = x * y - z;
-        System.out.println("Реши пример: " + x + " * " + y + " - " + z + " = ?");
+        String test = "";
+        for (int i = 0; i < difficultGame; ++i) {
+            char x = (char) (r.nextInt(42) + 48);
+            test = test + x;
+        }
+        System.out.println(test);
         Scanner sc = new Scanner(System.in);
-        int ans = sc.nextInt();
-        if (trueAnswer == ans) {
+        String answer = sc.nextLine().strip();
+        String newStr = "";
+        for (int i = answer.length() - 1; i >= 0; i--) {
+            newStr = newStr + answer.charAt(i);
+        }
+        if (newStr.equals(test)) {
             System.out.println("Верно! Ты победил монстра");
             return false;
         }
