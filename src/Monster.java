@@ -37,9 +37,9 @@ public class Monster {
         int ans = sc.nextInt();
         if (trueAnswer == ans) {
             System.out.println("Верно! Ты победил монстра");
-            return false;
+            return true;
         }
         System.out.println("Ты проиграл эту битву!");
-        return true;
+        return false;
     }
 }

@@ -73,12 +73,11 @@ public class Main {
                     }
                     System.out.println(wall);
 
-                    System.out.println("Введите куда будет ходить персонаж(ход возможен только по вертикали и горизонтали на одну клетку;");
+                    System.out.println("Введите куда будет ходить персонаж(ход возможен только по вертикали и горизонтали на одну клетку)");
                     System.out.println("Координаты персонажа - (x: " + (person.getX() + 1) + ", y: " + (person.getY() + 1) + "))");
 
                     int x = sc.nextInt() - 1;
                     int y = sc.nextInt() - 1;
-                    System.out.println(x + ", " + y);
                     if ((x == person.getX() && y == person.getY()) || !(0 <= x && x < sizeBoard && 0 <= y && y < sizeBoard)) {
                         System.out.println("Неккоректный ход");
                     } else if (person.moveCorrect(x, y)) {
@@ -88,11 +87,12 @@ public class Main {
                             step++;
                         } else if (board[y][x].equals(castle)) {
                             System.out.println("Вы прошли игру!");
+                            System.out.println("Итоги:\n" + "Сделано " + step + " шагов\n" + "Последняя координата " + (person.getX() + 1) + "," + (person.getY() + 1));
                             break;
                         } else {
                             for (Monster monst : arrMonster) {
                                 if (monst.conflictPerson(x, y)) {
-                                    if (!(monst.taskMonster(difficultGame))) {
+                                    if (monst.taskMonster(difficultGame)) {
                                         board[person.getY()][person.getX()] = "  ";
                                         person.move(x, y);
                                         step++;
@@ -105,6 +105,8 @@ public class Main {
                             }
                             if (person.getLive() <= 0) {
                                 System.out.println("Потрачено. Игра закончиалсь.");
+                                System.out.println("Закончились жизни. Итоги:\n" + "Сделано " + step + " шагов\n" + "Последняя координата " + (person.getX() + 1) + "," + (person.getY() + 1));
+                                System.exit(0);
                             } else if (person.getLive() == 1) {
                                 System.out.println("Вы наткнулись на монстра. Ваши координаты: " + (person.getX() + 1) + ", " + (person.getY() + 1) +
                                         "\nУ вас осталось: " + person.getLive() + " жизнь");
